@@ -20,7 +20,8 @@ app.post('/generate-sentence', async (req, res) => {
         }
 
         // Initialize the model
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        // Changed to 'gemini-pro' because your API key/region is throwing a 404 on the 1.5-flash model
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
         // The Gemini prompt logic
         const prompt = `Convert the following words into a meaningful, grammatically correct English sentence. Keep it simple and natural. Words: ${words}`;
