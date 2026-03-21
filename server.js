@@ -1,15 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { Groq } = require('groq-sdk');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize Gemini API
-// Make sure to set GEMINI_API_KEY in your .env file
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY');
+// Initialize Groq API
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'YOUR_GROQ_API_KEY' });
 
 app.post('/generate-sentence', async (req, res) => {
     try {
@@ -19,21 +18,20 @@ app.post('/generate-sentence', async (req, res) => {
             return res.status(400).json({ error: 'Words are required' });
         }
 
-        // Initialize the model
-        // Upgraded natively to 'gemini-2.0-flash' which perfectly matches your brand new Google API Key!
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const prompt = `Convert the following words into a meaningful, grammatically correct English sentence. Keep it simple and natural. Do not output anything else but the sentence. Words: ${words}`;
 
-        // The Gemini prompt logic
-        const prompt = `Convert the following words into a meaningful, grammatically correct English sentence. Keep it simple and natural. Words: ${words}`;
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [{ role: 'user', content: prompt }],
+            model: 'llama3-8b-8192',
+        });
 
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text().trim();
+        const responseText = chatCompletion.choices[0]?.message?.content || "";
 
         res.json({
-            sentence: responseText
+            sentence: responseText.trim()
         });
     } catch (error) {
-        console.error('Error with Gemini API:', error);
+        console.error('Error with Groq API:', error);
         res.status(500).json({ error: 'Failed to generate sentence' });
     }
 });
