@@ -33,10 +33,19 @@ app.post('/generate-sentence', async (req, res) => {
             temperature: 0.1,
         });
 
-        const responseText = chatCompletion.choices[0]?.message?.content || "";
+        let responseText = chatCompletion.choices[0]?.message?.content || "";
+        
+        // FIX: The Llama 3 model stubbornly tries to start sentences with "The" even when explicitly told not to.
+        // We will forcefully remove "The " from the beginning of the string using JavaScript.
+        responseText = responseText.trim().replace(/^the\s+/i, '');
+        
+        // Ensure the first letter is capitalized so it still looks like a proper sentence!
+        if (responseText.length > 0) {
+            responseText = responseText.charAt(0).toUpperCase() + responseText.slice(1);
+        }
 
         res.json({
-            sentence: responseText.trim()
+            sentence: responseText
         });
     } catch (error) {
         console.error('Error with Groq API:', error);
