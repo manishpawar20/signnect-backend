@@ -22,7 +22,7 @@ app.post('/generate-sentence', async (req, res) => {
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [{ role: 'user', content: prompt }],
-            model: 'llama3-8b-8192',
+            model: 'llama-3.1-8b-instant',
         });
 
         const responseText = chatCompletion.choices[0]?.message?.content || "";
