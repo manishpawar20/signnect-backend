@@ -18,7 +18,7 @@ app.post('/generate-sentence', async (req, res) => {
             return res.status(400).json({ error: 'Words are required' });
         }
 
-        const prompt = `Convert the following words into a meaningful, grammatically correct English sentence. Keep it simple and natural. Do not output anything else but the sentence. Words: ${words}`;
+        const prompt = `Take the exact words provided and form a simple present-tense sentence. Only add minimal conjunctions (and, but, or) and articles (a, an, the) to connect them so they read like a normal sentence. Do not change the original words or output anything else. Words: ${words}`;
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [{ role: 'user', content: prompt }],
