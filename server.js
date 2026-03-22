@@ -18,11 +18,19 @@ app.post('/generate-sentence', async (req, res) => {
             return res.status(400).json({ error: 'Words are required' });
         }
 
-        const prompt = `You are a strict text formatter. You will receive a list of words. YOUR ONLY JOB is to output the EXACT words provided in their ORIGINAL order. You may only insert "is", "am", "are", "a", "an", or "the" between the words to make them flow. DO NOT change the words. DO NOT add any other words. DO NOT change the tense. Words: ${words}`;
+        const prompt = `You are a strict text formatter. Form a readable string by ONLY inserting "is", "am", "are", "a", "an", or "the" strictly between the provided words. DO NOT add words to the beginning of the sentence. DO NOT change the original words or tense.`;
 
         const chatCompletion = await groq.chat.completions.create({
-            messages: [{ role: 'system', content: prompt }],
+            messages: [
+                { role: 'system', content: prompt },
+                { role: 'user', content: 'Words: TODAY I SAD' },
+                { role: 'assistant', content: 'Today I am sad' },
+                { role: 'user', content: 'Words: HELLO I RICH' },
+                { role: 'assistant', content: 'Hello I am rich' },
+                { role: 'user', content: `Words: ${words}` }
+            ],
             model: 'llama-3.1-8b-instant',
+            temperature: 0.1,
         });
 
         const responseText = chatCompletion.choices[0]?.message?.content || "";
