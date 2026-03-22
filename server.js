@@ -18,10 +18,10 @@ app.post('/generate-sentence', async (req, res) => {
             return res.status(400).json({ error: 'Words are required' });
         }
 
-        const prompt = `Take the exact words provided and form a simple present-tense sentence. Only add minimal conjunctions (and, but, or) and articles (a, an, the) to connect them so they read like a normal sentence. Do not change the original words or output anything else. Words: ${words}`;
+        const prompt = `You are a strict text formatter. You will receive a list of words. YOUR ONLY JOB is to output the EXACT words provided in their ORIGINAL order. You may only insert "is", "am", "are", "a", "an", or "the" between the words to make them flow. DO NOT change the words. DO NOT add any other words. DO NOT change the tense. Words: ${words}`;
 
         const chatCompletion = await groq.chat.completions.create({
-            messages: [{ role: 'user', content: prompt }],
+            messages: [{ role: 'system', content: prompt }],
             model: 'llama-3.1-8b-instant',
         });
 
