@@ -23,7 +23,7 @@ app.post('/generate-sentence', async (req, res) => {
         let messages = [];
 
         if (targetLanguage.toLowerCase() === 'english') {
-            prompt = `You are a strict text formatter. Form a readable string by ONLY inserting "is", "am", "are", "a", "an", or "the" strictly between the provided words. DO NOT add words to the beginning of the sentence. DO NOT change the original words or tense.`;
+            prompt = `You are a strict text formatter. Form a readable string by ONLY inserting "is", "am", "are", "a", or "an" strictly between the provided words. DO NOT add words to the beginning of the sentence. DO NOT use "the". DO NOT change the original words or tense.`;
             messages = [
                 { role: 'system', content: prompt },
                 { role: 'user', content: 'Words: TODAY I SAD' },
@@ -33,8 +33,7 @@ app.post('/generate-sentence', async (req, res) => {
                 { role: 'user', content: `Words: ${words}` }
             ];
         } else {
-            prompt = `You are a strict text formatter and translator. Form a readable English string by ONLY inserting "is", "am", "are", "a", "an", or "the" strictly between the provided words. Then, accurately translate that formed sentence into ${targetLanguage}. 
-Return ONLY the translated sentence in ${targetLanguage}. Do NOT return the English version. Do NOT return any explanations or additional text.`;
+            prompt = `You are a strict translator. Take the provided words and translate them into ${targetLanguage} as a simple, meaningul sentence. Return ONLY the translated sentence in ${targetLanguage}. Do NOT return the English version. Do NOT return any explanations or additional text.`;
             messages = [
                 { role: 'system', content: prompt },
                 { role: 'user', content: `Words: ${words}` }
